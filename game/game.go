@@ -2,7 +2,6 @@ package game
 
 import (
 	"errors"
-	"log"
 )
 
 const BoardX = 7
@@ -23,7 +22,7 @@ func (g Game) IsWinner(piece int) bool {
 	for x := 0; x < BoardX-3; x++ {
 		for y := 0; y < BoardY; y++ {
 			if g.Board[x][y] == piece && g.Board[x+1][y] == piece && g.Board[x+2][y] == piece && g.Board[x+3][y] == piece {
-				log.Printf("Found horizontal win at (%v, %v)", x, y)
+				// log.Printf("Found horizontal win at (%v, %v)", x, y)
 				return true
 			}
 		}
@@ -32,7 +31,7 @@ func (g Game) IsWinner(piece int) bool {
 	for x := 0; x < BoardX; x++ {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x][y+1] == piece && g.Board[x][y+2] == piece && g.Board[x][y+3] == piece {
-				log.Printf("Found vertical win at (%v, %v)", x, y)
+				// log.Printf("Found vertical win at (%v, %v)", x, y)
 				return true
 			}
 		}
@@ -41,7 +40,7 @@ func (g Game) IsWinner(piece int) bool {
 	for x := 0; x < BoardX-3; x++ {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x+1][y+1] == piece && g.Board[x+2][y+2] == piece && g.Board[x+3][y+3] == piece {
-				log.Printf("Found NE/SW diagonal win at (%v, %v)", x, y)
+				// log.Printf("Found NE/SW diagonal win at (%v, %v)", x, y)
 				return true
 			}
 		}
@@ -50,7 +49,7 @@ func (g Game) IsWinner(piece int) bool {
 	for x := 3; x < BoardX; x++ {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x-1][y+1] == piece && g.Board[x-2][y+2] == piece && g.Board[x-3][y+3] == piece {
-				log.Printf("Found NW/SE diagonal win at (%v, %v)", x, y)
+				// log.Printf("Found NW/SE diagonal win at (%v, %v)", x, y)
 				return true
 			}
 		}
@@ -59,11 +58,7 @@ func (g Game) IsWinner(piece int) bool {
 	return false
 }
 
-func (g Game) IsFinished() bool {
-	if g.IsWinner(PieceA) || g.IsWinner(PieceB) {
-		return true
-	}
-
+func (g Game) IsFull() bool {
 	for x := 0; x < BoardX; x++ {
 		for y := 0; y < BoardY; y++ {
 			if g.Board[x][y] == PieceEmpty {
@@ -75,8 +70,12 @@ func (g Game) IsFinished() bool {
 	return true
 }
 
+func (g Game) IsFinished() bool {
+	return g.IsWinner(PieceA) || g.IsWinner(PieceB) || g.IsFull()
+}
+
 func (g Game) IsValidMove(col int) bool {
-	return g.Board[col][0] == PieceEmpty && !(col < 0 || col > BoardX)
+	return !(col < 0 || col > BoardX) && g.Board[col][0] == PieceEmpty
 }
 
 func (g *Game) PlacePiece(col int, piece int) error {
@@ -92,4 +91,12 @@ func (g *Game) PlacePiece(col int, piece int) error {
 	}
 
 	return nil
+}
+
+func (g *Game) SwapTurn() {
+	if g.CurrentTurn == PieceA {
+		g.CurrentTurn = PieceB
+	} else {
+		g.CurrentTurn = PieceA
+	}
 }

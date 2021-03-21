@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	ct "github.com/daviddengcn/go-colortext"
-	"jakew.me/connect4/game"
+	"github.com/jake-walker/go-connect4/game"
 )
 
 func main() {
@@ -12,20 +12,30 @@ func main() {
 		CurrentTurn: game.PieceA,
 	}
 
+	printBoard(myGame)
+
 	for !myGame.IsFinished() {
+		if myGame.CurrentTurn == game.HumanPiece {
+			fmt.Println("It is your turn!")
+			askPlace(&myGame)
+		} else {
+			fmt.Println("It is computer's turn!")
+			move := game.DoComputerMove(myGame)
+			myGame.PlacePiece(move, game.ComputerPiece)
+			myGame.CurrentTurn = game.HumanPiece
+		}
+
 		printBoard(myGame)
-		askPlace(&myGame)
+	}
+
+	if myGame.IsWinner(game.HumanPiece) {
+		fmt.Println("Congrats! You beat the computer")
+	} else {
+		fmt.Println("Unlucky, the computer beat you this time")
 	}
 }
 
 func askPlace(g *game.Game) {
-	switch g.CurrentTurn {
-	case game.PieceA:
-		fmt.Println("It is player A's turn!")
-	case game.PieceB:
-		fmt.Println("It is player B's turn!")
-	}
-
 	var i = 0
 
 	for i < 1 || i > game.BoardX {
@@ -40,14 +50,11 @@ func askPlace(g *game.Game) {
 		return
 	}
 
-	if g.CurrentTurn == game.PieceA {
-		g.CurrentTurn = game.PieceB
-	} else {
-		g.CurrentTurn = game.PieceA
-	}
+	g.SwapTurn()
 }
 
 func printBoard(g game.Game) {
+	fmt.Print("\n")
 	for col := 1; col < game.BoardX+1; col++ {
 		fmt.Printf(" %v", col)
 	}
