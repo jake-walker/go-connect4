@@ -2,6 +2,8 @@
 
 A simple Connect 4 game written in Go!
 
+<img src="screenshot.png" width="300px">
+
 ## Usage
 
 ```
