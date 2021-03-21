@@ -18,12 +18,12 @@ type Game struct {
 	CurrentTurn int
 }
 
-func (g Game) IsWinner(piece int) bool {
+func (g Game) WinningMove(piece int) (x1, y1, x2, y2, x3, y3, x4, y4 int) {
 	for x := 0; x < BoardX-3; x++ {
 		for y := 0; y < BoardY; y++ {
 			if g.Board[x][y] == piece && g.Board[x+1][y] == piece && g.Board[x+2][y] == piece && g.Board[x+3][y] == piece {
 				// log.Printf("Found horizontal win at (%v, %v)", x, y)
-				return true
+				return x, y, x + 1, y, x + 2, y, x + 3, y
 			}
 		}
 	}
@@ -32,7 +32,7 @@ func (g Game) IsWinner(piece int) bool {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x][y+1] == piece && g.Board[x][y+2] == piece && g.Board[x][y+3] == piece {
 				// log.Printf("Found vertical win at (%v, %v)", x, y)
-				return true
+				return x, y, x, y + 1, x, y + 2, x, y + 3
 			}
 		}
 	}
@@ -41,7 +41,7 @@ func (g Game) IsWinner(piece int) bool {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x+1][y+1] == piece && g.Board[x+2][y+2] == piece && g.Board[x+3][y+3] == piece {
 				// log.Printf("Found NE/SW diagonal win at (%v, %v)", x, y)
-				return true
+				return x, y, x + 1, y + 1, x + 2, y + 2, x + 3, y + 3
 			}
 		}
 	}
@@ -50,12 +50,17 @@ func (g Game) IsWinner(piece int) bool {
 		for y := 0; y < BoardY-3; y++ {
 			if g.Board[x][y] == piece && g.Board[x-1][y+1] == piece && g.Board[x-2][y+2] == piece && g.Board[x-3][y+3] == piece {
 				// log.Printf("Found NW/SE diagonal win at (%v, %v)", x, y)
-				return true
+				return x, y, x - 1, y + 1, x - 2, y + 2, x - 3, y + 3
 			}
 		}
 	}
 
-	return false
+	return -1, -1, -1, -1, -1, -1, -1, -1
+}
+
+func (g Game) IsWinner(piece int) bool {
+	x1, y1, x2, y2, x3, y3, x4, y4 := g.WinningMove(piece)
+	return x1 != -1 && y1 != -1 && x2 != -1 && y2 != -1 && x3 != -1 && y3 != -1 && x4 != -1 && y4 != -1
 }
 
 func (g Game) IsFull() bool {

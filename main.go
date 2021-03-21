@@ -54,6 +54,13 @@ func askPlace(g *game.Game) {
 }
 
 func printBoard(g game.Game) {
+	var winX1, winY1, winX2, winY2, winX3, winY3, winX4, winY4 int = -1, -1, -1, -1, -1, -1, -1, -1
+	if g.IsWinner(game.PieceA) {
+		winX1, winY1, winX2, winY2, winX3, winY3, winX4, winY4 = g.WinningMove(game.PieceA)
+	} else if g.IsWinner(game.PieceB) {
+		winX1, winY1, winX2, winY2, winX3, winY3, winX4, winY4 = g.WinningMove(game.PieceB)
+	}
+
 	fmt.Print("\n")
 	for col := 1; col < game.BoardX+1; col++ {
 		fmt.Printf(" %v", col)
@@ -62,16 +69,22 @@ func printBoard(g game.Game) {
 
 	for y := 0; y < game.BoardY; y++ {
 		for x := 0; x < game.BoardX; x++ {
+			fmt.Print(" ")
+
+			if (x == winX1 && y == winY1) || (x == winX2 && y == winY2) || (x == winX3 && y == winY3) || (x == winX4 && y == winY4) {
+				ct.Background(ct.Yellow, false)
+			}
+
 			switch g.Board[x][y] {
 			case game.PieceEmpty:
-				fmt.Print(" _")
+				fmt.Print("_")
 			case game.PieceA:
 				ct.Foreground(ct.Red, true)
-				fmt.Print(" X")
+				fmt.Print("X")
 				ct.ResetColor()
 			case game.PieceB:
 				ct.Foreground(ct.Green, true)
-				fmt.Print(" O")
+				fmt.Print("O")
 				ct.ResetColor()
 			}
 		}
